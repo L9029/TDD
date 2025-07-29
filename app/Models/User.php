@@ -64,4 +64,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Define la relación con los repositorios.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function repositories()
+    {
+        return $this->hasMany(Repository::class);
+    }
 }
