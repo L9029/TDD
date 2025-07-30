@@ -123,4 +123,26 @@ class RepositoryControllerTest extends TestCase
             ->assertStatus(302)
             ->assertSessionHasErrors(['url', 'description']);
     }
+
+    /**
+     * Test que valida que un usuario autenticado pueda eliminar un repositorio existente.
+     *
+     * @return void
+     */
+    public function test_destroy(): void
+    {
+        $this->withoutMiddleware(); // Desactiva middleware para pruebas
+
+        // Se crea un usuario autenticado y un repositorio asociado
+        $user = User::factory()->create();
+        $repository = Repository::factory()->create();
+
+        // Se simula la autenticación del usuario y se envía una solicitud DELETE para eliminar el repositorio
+        $this->actingAs($user)
+            ->delete("/repositories/{$repository->id}")
+            ->assertRedirect('/repositories');
+
+        // Verifica que el repositorio ya no exista en la base de datos
+        $this->assertDatabaseMissing('repositories', $repository->toArray());
+    }
 }

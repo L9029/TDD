@@ -59,6 +59,10 @@ class RepositoryController extends Controller
 
     public function destroy($id)
     {
-        // Lógica para eliminar un repositorio
+        $repository = Repository::findOrFail($id);
+
+        $repository->delete();
+
+        return redirect()->route("repositories.index")->with('status', 'Repositorio eliminado exitosamente.');
     }
 }
