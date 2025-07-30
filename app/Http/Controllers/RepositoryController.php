@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Repository;
 
 class RepositoryController extends Controller
 {
@@ -38,7 +39,10 @@ class RepositoryController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Lógica para actualizar un repositorio existente
+        $repository = Repository::findOrFail($id);
+        $repository->update($request->all());
+
+        return redirect()->route("repositories.edit", $repository->id)->with('status', 'Repositorio actualizado exitosamente.');
     }
 
     public function destroy($id)

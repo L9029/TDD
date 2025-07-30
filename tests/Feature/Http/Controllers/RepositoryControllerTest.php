@@ -4,6 +4,7 @@ namespace Tests\Feature\Http\Controllers;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\Repository;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -53,6 +54,34 @@ class RepositoryControllerTest extends TestCase
             ->assertRedirect('/repositories');
 
         // Verifica que el repositorio se haya creado en la base de datos
+        $this->assertDatabaseHas('repositories', $data);
+    }
+
+    /**
+     * Test que valida que un usuario autenticado pueda actualizar un repositorio existente.
+     * 
+     * @return void
+     */
+    public function test_update(): void
+    {
+        $this->withoutMiddleware(); // Desactiva middleware para pruebas
+
+        // Información de ejemplo para actualizar un repositorio
+        $data = [
+            "url" => $this->faker->url(),
+            "description" => $this->faker->text(),
+        ];
+
+        // Se crea un usuario autenticado y un repositorio asociado
+        $user = User::factory()->create();
+        $repository = Repository::factory()->create();
+
+        // Se simula la autenticación del usuario y se envía una solicitud PUT para actualizar el repositorio
+        $this->actingAs($user)
+            ->put("/repositories/{$repository->id}", $data)
+            ->assertRedirect("/repositories/{$repository->id}/edit");
+
+        // Verifica que el repositorio se haya actualizado en la base de datos
         $this->assertDatabaseHas('repositories', $data);
     }
 }
