@@ -19,6 +19,8 @@ class RepositoryFactory extends Factory
     {
         return [
             "user_id" => User::factory(),
+            "url" => $this->faker->unique()->url(),
+            "description" => $this->faker->optional()->text(),
         ];
     }
 }

@@ -11,6 +11,17 @@ class Repository extends Model
     use HasFactory;
 
     /**
+     * Atributos que son asignables en masa.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'url',
+        'description',
+        'user_id',
+    ];
+
+    /**
      * Relación con el modelo User.
      */
     public function user()
