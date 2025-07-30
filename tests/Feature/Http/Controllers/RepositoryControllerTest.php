@@ -58,6 +58,25 @@ class RepositoryControllerTest extends TestCase
     }
 
     /**
+     * Test que valida que un usuario autenticado no pueda crear un repositorio sin los campos requeridos.
+     *
+     * @return void
+     */
+    public function test_validate_store(): void
+    {
+        $this->withoutMiddleware(); // Desactiva middleware para pruebas
+
+        // Se crea un usuario autenticado
+        $user = User::factory()->create();
+
+        // Se simula la autenticación del usuario y se envía una solicitud POST sin los campos requeridos
+        $this->actingAs($user)
+            ->post('/repositories', [])
+            ->assertStatus(302)
+            ->assertSessionHasErrors(['url', 'description']);
+    }
+
+    /**
      * Test que valida que un usuario autenticado pueda actualizar un repositorio existente.
      * 
      * @return void
@@ -83,5 +102,25 @@ class RepositoryControllerTest extends TestCase
 
         // Verifica que el repositorio se haya actualizado en la base de datos
         $this->assertDatabaseHas('repositories', $data);
+    }
+
+    /**
+     * Test que valida que un usuario autenticado no pueda actualizar un repositorio sin los campos requeridos.
+     *
+     * @return void
+     */
+    public function test_validate_update(): void
+    {
+        $this->withoutMiddleware(); // Desactiva middleware para pruebas
+
+        // Se crea un usuario autenticado y un repositorio asociado
+        $user = User::factory()->create();
+        $repository = Repository::factory()->create();
+
+        // Se simula la autenticación del usuario y se envía una solicitud PUT sin los campos requeridos
+        $this->actingAs($user)
+            ->put("/repositories/{$repository->id}", [])
+            ->assertStatus(302)
+            ->assertSessionHasErrors(['url', 'description']);
     }
 }

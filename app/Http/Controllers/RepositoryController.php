@@ -19,6 +19,12 @@ class RepositoryController extends Controller
 
     public function store(Request $request)
     {
+        // Validación de los datos del formulario
+        $request->validate([
+            'url' => 'required|url',
+            'description' => 'required|string|max:255',
+        ]);
+
         $request->user()->repositories()->create([
             'url' => $request->input('url'),
             'description' => $request->input('description'),
@@ -39,6 +45,12 @@ class RepositoryController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Validación de los datos del formulario
+        $request->validate([
+            'url' => 'required|url',
+            'description' => 'required|string|max:255',
+        ]);
+
         $repository = Repository::findOrFail($id);
         $repository->update($request->all());
 
