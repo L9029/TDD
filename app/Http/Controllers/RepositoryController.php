@@ -63,9 +63,14 @@ class RepositoryController extends Controller
         return redirect()->route("repositories.edit", $repository->id)->with('status', 'Repositorio actualizado exitosamente.');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $repository = Repository::findOrFail($id);
+
+        // Verifica que el usuario autenticado sea el propietario del repositorio
+        if ($repository->user_id !== $request->user()->id) {
+            abort(403, 'No tienes permiso para editar este repositorio.');
+        }
 
         $repository->delete();
 

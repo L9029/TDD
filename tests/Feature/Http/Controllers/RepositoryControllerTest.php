@@ -162,7 +162,9 @@ class RepositoryControllerTest extends TestCase
 
         // Se crea un usuario autenticado y un repositorio asociado
         $user = User::factory()->create();
-        $repository = Repository::factory()->create();
+        $repository = Repository::factory()->create([
+            'user_id' => $user->id, // Asegura que el repositorio pertenezca al usuario
+        ]);
 
         // Se simula la autenticación del usuario y se envía una solicitud DELETE para eliminar el repositorio
         $this->actingAs($user)
@@ -171,5 +173,24 @@ class RepositoryControllerTest extends TestCase
 
         // Verifica que el repositorio ya no exista en la base de datos
         $this->assertDatabaseMissing('repositories', $repository->toArray());
+    }
+
+    /**
+     * Test que valida que un usuario autenticado no pueda eliminar un repositorio que no le pertenece.
+     *
+     * @return void
+     */
+    public function test_destroy_policy(): void
+    {
+        $this->withoutMiddleware(); // Desactiva middleware para pruebas
+
+        // Se crea un usuario autenticado y un repositorio asociado
+        $user = User::factory()->create(); // Usuario con id 1
+        $repository = Repository::factory()->create(); // Repositorio que tiene un id diferente al del usuario con id 1
+
+        // Se simula la autenticación del usuario y se envía una solicitud DELETE para eliminar el repositorio
+        $this->actingAs($user)
+            ->delete("/repositories/{$repository->id}")
+            ->assertStatus(403); // Verifica que se deniegue el acceso
     }
 }
