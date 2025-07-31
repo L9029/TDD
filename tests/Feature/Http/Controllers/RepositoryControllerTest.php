@@ -93,7 +93,9 @@ class RepositoryControllerTest extends TestCase
 
         // Se crea un usuario autenticado y un repositorio asociado
         $user = User::factory()->create();
-        $repository = Repository::factory()->create();
+        $repository = Repository::factory()->create([
+            'user_id' => $user->id, // Asegura que el repositorio pertenezca al usuario
+        ]);
 
         // Se simula la autenticación del usuario y se envía una solicitud PUT para actualizar el repositorio
         $this->actingAs($user)
@@ -122,6 +124,31 @@ class RepositoryControllerTest extends TestCase
             ->put("/repositories/{$repository->id}", [])
             ->assertStatus(302)
             ->assertSessionHasErrors(['url', 'description']);
+    }
+
+    /**
+     * Test que valida que un usuario autenticado no pueda actualizar un repositorio que no le pertenece.
+     * 
+     * @return void
+     */
+    public function test_update_policy(): void
+    {
+        $this->withoutMiddleware(); // Desactiva middleware para pruebas
+
+        // Se crea un usuario autenticado y un repositorio asociado
+        $user = User::factory()->create(); // Usuario con id 1
+        $repository = Repository::factory()->create(); // Repositorio que tiene un id diferente al del usuario con id 1
+
+        // Información de ejemplo para actualizar un repositorio
+        $data = [
+            "url" => $this->faker->url(),
+            "description" => $this->faker->text(),
+        ];
+
+        // Se simula la autenticación del usuario y se envía una solicitud PUT para actualizar el repositorio
+        $this->actingAs($user)
+            ->put("/repositories/{$repository->id}", $data)
+            ->assertStatus(403); // Verifica que se deniegue el acceso
     }
 
     /**

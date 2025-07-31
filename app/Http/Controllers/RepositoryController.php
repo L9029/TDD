@@ -52,6 +52,12 @@ class RepositoryController extends Controller
         ]);
 
         $repository = Repository::findOrFail($id);
+
+        // Verifica que el usuario autenticado sea el propietario del repositorio
+        if ($repository->user_id !== $request->user()->id) {
+            abort(403, 'No tienes permiso para editar este repositorio.');
+        }
+
         $repository->update($request->all());
 
         return redirect()->route("repositories.edit", $repository->id)->with('status', 'Repositorio actualizado exitosamente.');
