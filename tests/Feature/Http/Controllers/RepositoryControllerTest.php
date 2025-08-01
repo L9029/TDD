@@ -31,6 +31,48 @@ class RepositoryControllerTest extends TestCase
     }
 
     /**
+     * Test que valida que un usuario autenticado pueda ver la lista de repositorios asociados a él.
+     *
+     * @return void
+     */
+    public function test_index_with_data(): void
+    {
+        $this->withoutMiddleware(); // Desactiva middleware para pruebas
+
+        // Crea un usuario autenticado
+        $user = User::factory()->create();
+
+        // Crea repositorios asociados al usuario
+        $repository = Repository::factory()->count(3)->create(['user_id' => $user->id]);
+
+        // Verifica que la vista de repositorios muestre los repositorios del usuario autenticado
+        $this->actingAs($user)
+            ->get('/repositories')
+            ->assertStatus(200)
+            ->assertSee($repository[0]->id)
+            ->assertSee($repository[0]->url);
+    }
+
+    /**
+     * Test que valida que un usuario autenticado no pueda ver la lista de repositorios que no esten asociados a él.
+     * 
+     * @return void
+     */
+    public function test_index_empty(): void
+    {
+        $this->withoutMiddleware(); // Desactiva middleware para pruebas
+
+        $user = User::factory()->create(); // Crea un usuario autenticado
+        $repository = Repository::factory()->create(); // Crea un repositorio que no pertenece al usuario
+
+        // Verifica que la vista de repositorios esté vacía cuando no hay repositorios
+        $this->actingAs($user)
+            ->get('/repositories')
+            ->assertStatus(200)
+            ->assertSee('No hay repositorios disponibles.');
+    }
+
+    /**
      * Test que valida que un usuario autenticado pueda crear un repositorio.
      *
      * @return void

@@ -7,9 +7,13 @@ use App\Models\Repository;
 
 class RepositoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Lógica para mostrar la lista de repositorios
+        $repositories = $request->user()->repositories;
+
+        return view('repositories.index', [
+            "repositories" => $repositories,
+        ]);
     }
 
     public function create()
