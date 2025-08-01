@@ -37,9 +37,18 @@ class RepositoryController extends Controller
         return redirect()->route("repositories.index")->with('status', 'Repositorio creado exitosamente.');
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        // Lógica para mostrar un repositorio específico
+        $repository = Repository::findOrFail($id);
+
+        // Verifica que el usuario autenticado sea el propietario del repositorio
+        if ($repository->user_id !== $request->user()->id) {
+            abort(403, 'No tienes permiso para editar este repositorio.');
+        }
+
+        return view('repositories.show', [
+            'repository' => $repository,
+        ]);
     }
 
     public function edit($id)

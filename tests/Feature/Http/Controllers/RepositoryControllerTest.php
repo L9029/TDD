@@ -119,6 +119,47 @@ class RepositoryControllerTest extends TestCase
     }
 
     /**
+     * Test que valida que un usuario autenticado pueda ver un repositorio específico.
+     *
+     * @return void
+     */
+    public function test_show(): void
+    {
+        $this->withoutMiddleware(); // Desactiva middleware para pruebas
+
+        // Se crea un usuario autenticado y un repositorio asociado
+        $user = User::factory()->create();
+        $repository = Repository::factory()->create([
+            'user_id' => $user->id, // Asegura que el repositorio pertenezca al usuario
+        ]);
+
+        // Se simula la autenticación del usuario y se accede a la ruta show del repositorio
+        $this->actingAs($user)
+            ->get("/repositories/{$repository->id}")
+            ->assertStatus(200)
+            ->assertSee($repository->url);
+    }
+
+    /**
+     * Test que valida que un usuario autenticado no pueda ver un repositorio que no le pertenece.
+     * 
+     * @return void
+     */
+    public function test_show_policy(): void
+    {
+        $this->withoutMiddleware(); // Desactiva middleware para pruebas
+
+        // Se crea un usuario autenticado y un repositorio asociado
+        $user = User::factory()->create(); // Usuario con id 1
+        $repository = Repository::factory()->create(); // Repositorio que tiene un id diferente al del usuario con id 1
+
+        // Se simula la autenticación del usuario y se accede a la ruta show del repositorio
+        $this->actingAs($user)
+            ->get("/repositories/{$repository->id}")
+            ->assertStatus(403); // Verifica que se deniegue el acceso
+    }
+
+    /**
      * Test que valida que un usuario autenticado pueda actualizar un repositorio existente.
      * 
      * @return void
