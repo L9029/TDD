@@ -30,6 +30,11 @@
                                 <td>{{ $repository->created_at }}</td>
                                 <td>{{ $repository->updated_at }}</td>
                                 <td>
+                                    <a href="{{ route('repositories.edit', $repository->id) }}" class="text-blue-500 hover:underline">
+                                        Editar
+                                    </a>
+                                </td>
+                                <td>
                                     <a href="{{ route('repositories.show', $repository->id) }}" class="text-blue-500 hover:underline">
                                         Ver
                                     </a>
@@ -37,7 +42,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center">No hay repositorios disponibles.</td>
+                                <td colspan="8" class="text-center">No hay repositorios disponibles.</td>
                             </tr>
                         @endforelse
                     </tbody>

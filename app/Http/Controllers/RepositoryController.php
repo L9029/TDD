@@ -51,9 +51,18 @@ class RepositoryController extends Controller
         ]);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        // Lógica para mostrar el formulario de edición de un repositorio
+        $repository = Repository::findOrFail($id);
+
+        // Verifica que el usuario autenticado sea el propietario del repositorio
+        if ($repository->user_id !== $request->user()->id) {
+            abort(403, 'No tienes permiso para editar este repositorio.');
+        }
+
+        return view('repositories.edit', [
+            'repository' => $repository,
+        ]);
     }
 
     public function update(Request $request, $id)

@@ -160,6 +160,48 @@ class RepositoryControllerTest extends TestCase
     }
 
     /**
+     * Test que valida que un usuario autenticado pueda acceder al formulario de edición de un repositorio.
+     *
+     * @return void
+     */
+    public function test_edit(): void
+    {
+        $this->withoutMiddleware(); // Desactiva middleware para pruebas
+
+        // Se crea un usuario autenticado y un repositorio asociado
+        $user = User::factory()->create();
+        $repository = Repository::factory()->create([
+            'user_id' => $user->id, // Asegura que el repositorio pertenezca al usuario
+        ]);
+
+        // Se simula la autenticación del usuario y se accede a la ruta edit del repositorio
+        $this->actingAs($user)
+            ->get("/repositories/{$repository->id}/edit")
+            ->assertStatus(200)
+            ->assertSee($repository->url)
+            ->assertSee($repository->description);
+    }
+
+    /**
+     * Test que valida que un usuario autenticado no pueda acceder al formulario de edición de un repositorio que no le pertenece.
+     * 
+     * @return void
+     */
+    public function test_edit_policy(): void
+    {
+        $this->withoutMiddleware(); // Desactiva middleware para pruebas
+
+        // Se crea un usuario autenticado y un repositorio asociado
+        $user = User::factory()->create(); // Usuario con id 1
+        $repository = Repository::factory()->create(); // Repositorio que tiene un id diferente al del usuario con id 1
+
+        // Se simula la autenticación del usuario y se accede a la ruta edit del repositorio
+        $this->actingAs($user)
+            ->get("/repositories/{$repository->id}/edit")
+            ->assertStatus(403); // Verifica que se deniegue el acceso
+    }
+
+    /**
      * Test que valida que un usuario autenticado pueda actualizar un repositorio existente.
      * 
      * @return void
