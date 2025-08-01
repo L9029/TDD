@@ -18,7 +18,7 @@ class RepositoryController extends Controller
 
     public function create()
     {
-        // Lógica para mostrar el formulario de creación de repositorio
+        return view('repositories.create');
     }
 
     public function store(Request $request)

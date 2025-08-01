@@ -73,6 +73,25 @@ class RepositoryControllerTest extends TestCase
     }
 
     /**
+     * Test que valida que un usuario autenticado pueda acceder al formulario de creación de repositorios.
+     *
+     * @return void
+     */
+    public function test_create(): void
+    {
+        $this->withoutMiddleware(); // Desactiva middleware para pruebas
+
+        // Crea un usuario autenticado
+        $user = User::factory()->create();
+
+        // Verifica que el formulario de creación de repositorios se muestre correctamente
+        $this->actingAs($user)
+            ->get('/repositories/create')
+            ->assertStatus(200)
+            ->assertSee('Crear Repositorio');
+    }
+
+    /**
      * Test que valida que un usuario autenticado pueda crear un repositorio.
      *
      * @return void
