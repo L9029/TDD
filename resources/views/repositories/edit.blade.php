@@ -13,11 +13,6 @@
                     @method('PUT')
 
                     <div class="mb-4">
-                        <label for="name" class="block text-sm font-medium text-gray-700">Nombre del Repositorio</label>
-                        <input type="text" name="name" id="name" value="{{ old('name', $repository->name) }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
-                    </div>
-
-                    <div class="mb-4">
                         <label for="description" class="block text-sm font-medium text-gray-700">Descripción</label>
                         <textarea name="description" id="description" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">{{ old('description', $repository->description) }}</textarea>
                     </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RepositoryRequest;
 use Illuminate\Http\Request;
 use App\Models\Repository;
 
@@ -21,14 +22,8 @@ class RepositoryController extends Controller
         return view('repositories.create');
     }
 
-    public function store(Request $request)
+    public function store(RepositoryRequest $request)
     {
-        // Validación de los datos del formulario
-        $request->validate([
-            'url' => 'required|url',
-            'description' => 'required|string|max:255',
-        ]);
-
         $request->user()->repositories()->create([
             'url' => $request->input('url'),
             'description' => $request->input('description'),
@@ -65,14 +60,8 @@ class RepositoryController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(RepositoryRequest $request, $id)
     {
-        // Validación de los datos del formulario
-        $request->validate([
-            'url' => 'required|url',
-            'description' => 'required|string|max:255',
-        ]);
-
         $repository = Repository::findOrFail($id);
 
         // Verifica que el usuario autenticado sea el propietario del repositorio
