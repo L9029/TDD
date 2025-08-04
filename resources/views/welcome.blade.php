@@ -20,11 +20,22 @@
         @endif
     </head>
     <body class="bg-gray-200">
-        @forelse ($repositories as $repository)
-            <h1>{{ $repository->url }}</h1>
-            <p>{{ $repository->description }}</p>
-        @empty
-            <p class="text-center">No hay repositorios.</p>
-        @endforelse
+        <ul class="max-w-lg bg-white border-r border-gray-300 shadow-xl">
+            @forelse ($repositories as $repository)
+                <li class="flex items-center text-black p-2 hover:bg-gray-300">
+                    <img src="{{ $repository->user->profile_photo_url }}" class="w-12 h-12 rounded-full mr-2">
+
+                    <div class="flex justify-between w-full">
+                        <div class="flex-1">
+                            <h2 class="text-sm font-semibold text-black">{{ $repository->url }}</h2>
+                            <p>{{ $repository->description }}</p>
+                        </div>
+                        <span class="text-xs font-medium text-gray-600">{{ $repository->created_at }}</span>
+                    </div>
+                </li>
+            @empty
+                <p class="text-center">No hay repositorios.</p>
+            @endforelse
+        </ul>
     </body>
 </html>
